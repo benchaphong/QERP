@@ -3,15 +3,17 @@ import { Calculator, Plus, X } from 'lucide-react';
 
 const Accounting = () => {
     const [invoices, setInvoices] = useState([
-        { id: 'INV-2026-001', client: 'Global Retail Corp', date: '2026-03-01', dueDate: '2026-03-31', amount: 450000, status: 'Paid' },
-        { id: 'INV-2026-002', client: 'Local Shop XYZ', date: '2026-03-02', dueDate: '2026-04-01', amount: 12500, status: 'Unpaid' },
+        { id: 'INV-2026-001', client: 'Global Retail Corp', date: '2026-03-01', dueDate: '2026-03-31', quantity: 90, unitPrice: 5000, amount: 450000, status: 'Paid' },
+        { id: 'INV-2026-002', client: 'Local Shop XYZ', date: '2026-03-02', dueDate: '2026-04-01', quantity: 250, unitPrice: 50, amount: 12500, status: 'Unpaid' },
     ]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newInvoice, setNewInvoice] = useState({ client: '', amount: 0, dueDate: '' });
+    const [newInvoice, setNewInvoice] = useState({ client: '', quantity: 1, unitPrice: 0, dueDate: '' });
+
+    const calculatedAmount = newInvoice.quantity * newInvoice.unitPrice;
 
     const handleCreateInvoice = (e) => {
         e.preventDefault();
-        if (!newInvoice.client || !newInvoice.dueDate) return;
+        if (!newInvoice.client || !newInvoice.dueDate || newInvoice.quantity < 1) return;
 
         const newId = `INV-2026-00${invoices.length + 1}`;
         setInvoices([...invoices, {
@@ -19,10 +21,12 @@ const Accounting = () => {
             client: newInvoice.client,
             date: new Date().toISOString().split('T')[0],
             dueDate: newInvoice.dueDate,
-            amount: newInvoice.amount,
+            quantity: newInvoice.quantity,
+            unitPrice: newInvoice.unitPrice,
+            amount: calculatedAmount,
             status: 'Unpaid'
         }]);
-        setNewInvoice({ client: '', amount: 0, dueDate: '' });
+        setNewInvoice({ client: '', quantity: 1, unitPrice: 0, dueDate: '' });
         setIsModalOpen(false);
     };
 
@@ -54,6 +58,8 @@ const Accounting = () => {
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Client</th>
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Issued Date</th>
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Due Date</th>
+                                <th style={{ padding: '12px', fontWeight: '500', textAlign: 'center' }}>Qty</th>
+                                <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Unit Price (฿)</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Amount (฿)</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'center' }}>Status</th>
                             </tr>
@@ -65,6 +71,8 @@ const Accounting = () => {
                                     <td style={{ padding: '16px 12px', color: 'var(--text-main)' }}>{invoice.client}</td>
                                     <td style={{ padding: '16px 12px', color: 'var(--text-muted)' }}>{invoice.date}</td>
                                     <td style={{ padding: '16px 12px', color: 'var(--text-main)' }}>{invoice.dueDate}</td>
+                                    <td style={{ padding: '16px 12px', textAlign: 'center', fontWeight: '500' }}>{invoice.quantity || '-'}</td>
+                                    <td style={{ padding: '16px 12px', textAlign: 'right', fontWeight: '500' }}>{invoice.unitPrice ? Number(invoice.unitPrice).toLocaleString() : '-'}</td>
                                     <td style={{ padding: '16px 12px', textAlign: 'right', fontWeight: '500' }}>
                                         {Number(invoice.amount).toLocaleString()}
                                     </td>
@@ -113,26 +121,45 @@ const Accounting = () => {
 
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500', color: 'var(--text-main)' }}>Due Date</label>
+                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500', color: 'var(--text-main)' }}>Quantity</label>
                                     <input
-                                        type="date"
+                                        type="number"
+                                        min="1"
                                         required
-                                        value={newInvoice.dueDate}
-                                        onChange={e => setNewInvoice({ ...newInvoice, dueDate: e.target.value })}
+                                        value={newInvoice.quantity}
+                                        onChange={e => setNewInvoice({ ...newInvoice, quantity: parseInt(e.target.value) || 1 })}
                                         style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-color)', color: 'var(--text-main)', fontFamily: 'inherit' }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500', color: 'var(--text-main)' }}>Amount (฿)</label>
+                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500', color: 'var(--text-main)' }}>Unit Price (฿)</label>
                                     <input
                                         type="number"
                                         min="0"
                                         step="0.01"
                                         required
-                                        value={newInvoice.amount}
-                                        onChange={e => setNewInvoice({ ...newInvoice, amount: parseFloat(e.target.value) || 0 })}
+                                        value={newInvoice.unitPrice}
+                                        onChange={e => setNewInvoice({ ...newInvoice, unitPrice: parseFloat(e.target.value) || 0 })}
                                         style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-color)', color: 'var(--text-main)', fontFamily: 'inherit' }}
                                     />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500', color: 'var(--text-main)' }}>Due Date</label>
+                                <input
+                                    type="date"
+                                    required
+                                    value={newInvoice.dueDate}
+                                    onChange={e => setNewInvoice({ ...newInvoice, dueDate: e.target.value })}
+                                    style={{ width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-color)', color: 'var(--text-main)', fontFamily: 'inherit' }}
+                                />
+                            </div>
+
+                            <div style={{ backgroundColor: 'var(--bg-color)', padding: '12px', borderRadius: 'var(--radius-md)', marginTop: '8px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: '600' }}>
+                                    <span>Total Amount:</span>
+                                    <span style={{ color: 'var(--primary-color)', fontSize: '1.25rem' }}>฿{calculatedAmount.toLocaleString()}</span>
                                 </div>
                             </div>
 

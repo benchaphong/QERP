@@ -49,7 +49,7 @@ const Inventory = () => {
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Product Name</th>
                                 <th style={{ padding: '12px', fontWeight: '500' }}>SKU</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Quantity</th>
-                                <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Price (฿)</th>
+                                <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Unit Price (฿)</th>
                             </tr>
                         </thead>
                         <tbody>

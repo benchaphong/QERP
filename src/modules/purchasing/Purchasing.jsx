@@ -81,6 +81,7 @@ const Purchasing = () => {
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Supplier</th>
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Date</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'center' }}>Qty</th>
+                                <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Unit Price (฿)</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Total (฿)</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'center' }}>Status</th>
                             </tr>
@@ -88,12 +89,16 @@ const Purchasing = () => {
                         <tbody>
                             {purchaseOrders.map(order => {
                                 const totalQty = order.items?.reduce((sum, item) => sum + item.quantity, 0) || '-';
+                                const unitPrice = order.items?.[0]?.price || '-';
                                 return (
                                     <tr key={order.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background-color var(--transition-fast)' }} className="table-row-hover">
                                         <td style={{ padding: '16px 12px', fontWeight: '600', color: 'var(--primary-color)' }}>{order.id}</td>
                                         <td style={{ padding: '16px 12px', color: 'var(--text-main)' }}>{order.supplier}</td>
                                         <td style={{ padding: '16px 12px', color: 'var(--text-muted)' }}>{order.date}</td>
                                         <td style={{ padding: '16px 12px', textAlign: 'center', fontWeight: '500' }}>{totalQty}</td>
+                                        <td style={{ padding: '16px 12px', textAlign: 'right', fontWeight: '500' }}>
+                                            {unitPrice !== '-' ? Number(unitPrice).toLocaleString() : '-'}
+                                        </td>
                                         <td style={{ padding: '16px 12px', textAlign: 'right', fontWeight: '500' }}>
                                             {Number(order.total).toLocaleString()}
                                         </td>
