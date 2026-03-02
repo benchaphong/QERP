@@ -78,10 +78,74 @@ export const AppProvider = ({ children }) => {
         });
     };
 
+    const updateSalesOrderStatus = (orderId, newStatus) => {
+        setSalesOrders(prev => {
+            const order = prev.find(o => o.id === orderId);
+            if (!order || order.status === newStatus) return prev;
+
+            // Revert inventory if Cancelled
+            if (newStatus === 'Cancelled' && order.status !== 'Cancelled') {
+                setProducts(prodList => {
+                    let map = [...prodList];
+                    order.items.forEach(item => {
+                        map = map.map(p => p.id === item.productId ? { ...p, stock: p.stock + item.quantity } : p);
+                    });
+                    return map;
+                });
+            }
+            // Deduct again if moved from Cancelled to Processing/Completed
+            else if (order.status === 'Cancelled' && newStatus !== 'Cancelled') {
+                setProducts(prodList => {
+                    let map = [...prodList];
+                    order.items.forEach(item => {
+                        map = map.map(p => p.id === item.productId ? { ...p, stock: p.stock - item.quantity } : p);
+                    });
+                    return map;
+                });
+            }
+
+            return prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
+        });
+    };
+
+    const updatePurchaseOrderStatus = (orderId, newStatus) => {
+        setPurchaseOrders(prev => {
+            const order = prev.find(o => o.id === orderId);
+            if (!order || order.status === newStatus) return prev;
+
+            // Revert inventory if Cancelled
+            if (newStatus === 'Cancelled' && order.status !== 'Cancelled') {
+                setProducts(prodList => {
+                    let map = [...prodList];
+                    order.items.forEach(item => {
+                        if (!item.isNewProduct) {
+                            map = map.map(p => p.id === item.productId ? { ...p, stock: p.stock - item.quantity } : p);
+                        }
+                    });
+                    return map;
+                });
+            }
+            // Add again if moved from Cancelled to Pending/Approved
+            else if (order.status === 'Cancelled' && newStatus !== 'Cancelled') {
+                setProducts(prodList => {
+                    let map = [...prodList];
+                    order.items.forEach(item => {
+                        if (!item.isNewProduct) {
+                            map = map.map(p => p.id === item.productId ? { ...p, stock: p.stock + item.quantity } : p);
+                        }
+                    });
+                    return map;
+                });
+            }
+
+            return prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
+        });
+    };
+
     const value = {
         products, addProduct, updateProductStock,
-        salesOrders, addSalesOrder,
-        purchaseOrders, addPurchaseOrder
+        salesOrders, addSalesOrder, updateSalesOrderStatus,
+        purchaseOrders, addPurchaseOrder, updatePurchaseOrderStatus
     };
 
     return (

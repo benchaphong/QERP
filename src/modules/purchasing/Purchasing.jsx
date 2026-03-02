@@ -3,7 +3,7 @@ import { ShoppingCart, Plus, X } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 
 const Purchasing = () => {
-    const { purchaseOrders, addPurchaseOrder, products } = useAppContext();
+    const { purchaseOrders, addPurchaseOrder, updatePurchaseOrderStatus, products } = useAppContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Purchase Mode: 'existing' or 'new'
@@ -103,17 +103,27 @@ const Purchasing = () => {
                                             {Number(order.total).toLocaleString()}
                                         </td>
                                         <td style={{ padding: '16px 12px', textAlign: 'center' }}>
-                                            <span style={{
-                                                padding: '4px 10px',
-                                                borderRadius: '999px',
-                                                backgroundColor: order.status === 'Approved' ? '#dcfce7' : '#fef08a',
-                                                color: order.status === 'Approved' ? '#166534' : '#854d0e',
-                                                fontWeight: '600',
-                                                fontSize: '0.75rem',
-                                                textTransform: 'uppercase'
-                                            }}>
-                                                {order.status}
-                                            </span>
+                                            <select
+                                                value={order.status}
+                                                onChange={(e) => updatePurchaseOrderStatus(order.id, e.target.value)}
+                                                style={{
+                                                    padding: '4px 10px',
+                                                    borderRadius: '999px',
+                                                    backgroundColor: order.status === 'Approved' ? '#dcfce7' : order.status === 'Cancelled' ? '#fee2e2' : '#fef08a',
+                                                    color: order.status === 'Approved' ? '#166534' : order.status === 'Cancelled' ? '#991b1b' : '#854d0e',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.75rem',
+                                                    textTransform: 'uppercase',
+                                                    border: '1px solid transparent',
+                                                    outline: 'none',
+                                                    cursor: 'pointer',
+                                                    textAlign: 'center'
+                                                }}
+                                            >
+                                                <option value="Pending">Pending</option>
+                                                <option value="Approved">Approved</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
                                         </td>
                                     </tr>
                                 )

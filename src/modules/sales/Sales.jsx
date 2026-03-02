@@ -3,7 +3,7 @@ import { CircleDollarSign, Plus, X } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 
 const Sales = () => {
-    const { salesOrders, addSalesOrder, products } = useAppContext();
+    const { salesOrders, addSalesOrder, updateSalesOrderStatus, products } = useAppContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newOrder, setNewOrder] = useState({ customer: '', productId: '', quantity: 1 });
 
@@ -79,17 +79,27 @@ const Sales = () => {
                                             {Number(order.total).toLocaleString()}
                                         </td>
                                         <td style={{ padding: '16px 12px', textAlign: 'center' }}>
-                                            <span style={{
-                                                padding: '4px 10px',
-                                                borderRadius: '999px',
-                                                backgroundColor: order.status === 'Completed' ? '#dcfce7' : '#e0e7ff',
-                                                color: order.status === 'Completed' ? '#166534' : '#3730a3',
-                                                fontWeight: '600',
-                                                fontSize: '0.75rem',
-                                                textTransform: 'uppercase'
-                                            }}>
-                                                {order.status}
-                                            </span>
+                                            <select
+                                                value={order.status}
+                                                onChange={(e) => updateSalesOrderStatus(order.id, e.target.value)}
+                                                style={{
+                                                    padding: '4px 10px',
+                                                    borderRadius: '999px',
+                                                    backgroundColor: order.status === 'Completed' ? '#dcfce7' : order.status === 'Cancelled' ? '#fee2e2' : '#e0e7ff',
+                                                    color: order.status === 'Completed' ? '#166534' : order.status === 'Cancelled' ? '#991b1b' : '#3730a3',
+                                                    fontWeight: '600',
+                                                    fontSize: '0.75rem',
+                                                    textTransform: 'uppercase',
+                                                    border: '1px solid transparent',
+                                                    outline: 'none',
+                                                    cursor: 'pointer',
+                                                    textAlign: 'center'
+                                                }}
+                                            >
+                                                <option value="Processing">Processing</option>
+                                                <option value="Completed">Completed</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
                                         </td>
                                     </tr>
                                 )
