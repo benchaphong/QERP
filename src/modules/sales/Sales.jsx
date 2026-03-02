@@ -56,34 +56,39 @@ const Sales = () => {
                                 <th style={{ padding: '12px', fontWeight: '500' }}>SO Number</th>
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Customer</th>
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Date</th>
+                                <th style={{ padding: '12px', fontWeight: '500', textAlign: 'center' }}>Qty</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Total (฿)</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'center' }}>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {salesOrders.map(order => (
-                                <tr key={order.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background-color var(--transition-fast)' }} className="table-row-hover">
-                                    <td style={{ padding: '16px 12px', fontWeight: '600', color: 'var(--primary-color)' }}>{order.id}</td>
-                                    <td style={{ padding: '16px 12px', color: 'var(--text-main)' }}>{order.customer}</td>
-                                    <td style={{ padding: '16px 12px', color: 'var(--text-muted)' }}>{order.date}</td>
-                                    <td style={{ padding: '16px 12px', textAlign: 'right', fontWeight: '500' }}>
-                                        {Number(order.total).toLocaleString()}
-                                    </td>
-                                    <td style={{ padding: '16px 12px', textAlign: 'center' }}>
-                                        <span style={{
-                                            padding: '4px 10px',
-                                            borderRadius: '999px',
-                                            backgroundColor: order.status === 'Completed' ? '#dcfce7' : '#e0e7ff',
-                                            color: order.status === 'Completed' ? '#166534' : '#3730a3',
-                                            fontWeight: '600',
-                                            fontSize: '0.75rem',
-                                            textTransform: 'uppercase'
-                                        }}>
-                                            {order.status}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
+                            {salesOrders.map(order => {
+                                const totalQty = order.items?.reduce((sum, item) => sum + item.quantity, 0) || '-';
+                                return (
+                                    <tr key={order.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background-color var(--transition-fast)' }} className="table-row-hover">
+                                        <td style={{ padding: '16px 12px', fontWeight: '600', color: 'var(--primary-color)' }}>{order.id}</td>
+                                        <td style={{ padding: '16px 12px', color: 'var(--text-main)' }}>{order.customer}</td>
+                                        <td style={{ padding: '16px 12px', color: 'var(--text-muted)' }}>{order.date}</td>
+                                        <td style={{ padding: '16px 12px', textAlign: 'center', fontWeight: '500' }}>{totalQty}</td>
+                                        <td style={{ padding: '16px 12px', textAlign: 'right', fontWeight: '500' }}>
+                                            {Number(order.total).toLocaleString()}
+                                        </td>
+                                        <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                                            <span style={{
+                                                padding: '4px 10px',
+                                                borderRadius: '999px',
+                                                backgroundColor: order.status === 'Completed' ? '#dcfce7' : '#e0e7ff',
+                                                color: order.status === 'Completed' ? '#166534' : '#3730a3',
+                                                fontWeight: '600',
+                                                fontSize: '0.75rem',
+                                                textTransform: 'uppercase'
+                                            }}>
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </table>
                 )}
