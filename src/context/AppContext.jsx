@@ -13,14 +13,14 @@ export const AppProvider = ({ children }) => {
 
     // Sales State
     const [salesOrders, setSalesOrders] = useState([
-        { id: 'SO-2026-001', customer: 'Global Retail Corp', date: '2026-03-01', total: 450000, status: 'Completed', items: [] },
-        { id: 'SO-2026-002', customer: 'Local Shop XYZ', date: '2026-03-02', total: 12500, status: 'Processing', items: [] },
+        { id: 'SO-2026-001', customer: 'Global Retail Corp', date: '2026-03-01', total: 450000, status: 'Completed', items: [{ productId: 1, quantity: 128, price: 3500 }] },
+        { id: 'SO-2026-002', customer: 'Local Shop XYZ', date: '2026-03-02', total: 12500, status: 'Processing', items: [{ productId: 2, quantity: 4, price: 2800 }] },
     ]);
 
     // Purchasing State
     const [purchaseOrders, setPurchaseOrders] = useState([
-        { id: 'PO-2026-001', supplier: 'Tech Gadgets Inc.', date: '2026-03-01', total: 125000, status: 'Approved', items: [] },
-        { id: 'PO-2026-002', supplier: 'Office Supplies Co.', date: '2026-03-02', total: 8500, status: 'Pending', items: [] },
+        { id: 'PO-2026-001', supplier: 'Tech Gadgets Inc.', date: '2026-03-01', total: 125000, status: 'Approved', items: [{ isNewProduct: false, productId: 1, quantity: 50, price: 2500 }] },
+        { id: 'PO-2026-002', supplier: 'Office Supplies Co.', date: '2026-03-02', total: 8500, status: 'Pending', items: [{ isNewProduct: false, productId: 2, quantity: 5, price: 1700 }] },
     ]);
 
     // Actions
