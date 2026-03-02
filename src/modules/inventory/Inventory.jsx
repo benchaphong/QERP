@@ -48,7 +48,7 @@ const Inventory = () => {
                             <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
                                 <th style={{ padding: '12px', fontWeight: '500' }}>Product Name</th>
                                 <th style={{ padding: '12px', fontWeight: '500' }}>SKU</th>
-                                <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Stock Level</th>
+                                <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Quantity</th>
                                 <th style={{ padding: '12px', fontWeight: '500', textAlign: 'right' }}>Price (฿)</th>
                             </tr>
                         </thead>
