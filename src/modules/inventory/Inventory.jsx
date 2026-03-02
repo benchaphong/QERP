@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Package, Plus, X } from 'lucide-react';
+import { useAppContext } from '../../context/AppContext';
 
 const Inventory = () => {
-    const [products, setProducts] = useState([
-        { id: 1, name: 'Premium Office Chair', sku: 'FUR-001', stock: 45, price: 3500 },
-        { id: 2, name: 'Mechanical Keyboard', sku: 'ELC-042', stock: 12, price: 2800 },
-    ]);
+    const { products, addProduct } = useAppContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newProduct, setNewProduct] = useState({ name: '', sku: '', stock: 0, price: 0 });
 
@@ -13,7 +11,13 @@ const Inventory = () => {
         e.preventDefault();
         if (!newProduct.name || !newProduct.sku) return;
 
-        setProducts([...products, { ...newProduct, id: Date.now() }]);
+        addProduct({
+            name: newProduct.name,
+            sku: newProduct.sku,
+            stock: newProduct.stock,
+            price: newProduct.price
+        });
+
         setNewProduct({ name: '', sku: '', stock: 0, price: 0 });
         setIsModalOpen(false);
     };
