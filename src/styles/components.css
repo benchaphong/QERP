@@ -1,0 +1,5 @@
+/* Add to existing index.css */
+
+.table-row-hover:hover {
+    background-color: var(--bg-color);
+}
