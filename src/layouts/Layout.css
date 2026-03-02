@@ -103,10 +103,8 @@
     letter-spacing: -0.025em;
 }
 
-.brand-icon {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.brand-icon-lucide {
+    color: var(--primary-color);
 }
 
 .sidebar-nav {

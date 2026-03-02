@@ -9,7 +9,7 @@ const Layout = () => {
             <Sidebar />
             <div className="layout-main">
                 <header className="layout-header">
-                    <div className="header-title">QERP System</div>
+                    <div className="header-title">ERP System</div>
                     <div className="header-actions">
                         <button className="user-btn">
                             <span className="user-avatar">AD</span>

@@ -5,7 +5,8 @@ import {
     ShoppingCart,
     Calculator,
     CircleDollarSign,
-    PackageSearch
+    PackageSearch,
+    Box
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -20,8 +21,8 @@ const Sidebar = () => {
     return (
         <aside className="sidebar">
             <div className="sidebar-header">
-                <div className="brand">
-                    <span className="brand-icon">◼</span> QERP
+                <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Box size={28} className="brand-icon-lucide" color="currentColor" /> ERP
                 </div>
             </div>
             <nav className="sidebar-nav">
