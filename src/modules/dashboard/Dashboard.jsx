@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { ShoppingCart, Package, Truck, ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react';
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line
+} from 'recharts';
 
 const Dashboard = () => {
     const { products, salesOrders, purchaseOrders } = useAppContext();
@@ -14,12 +17,50 @@ const Dashboard = () => {
     const lowStockItems = products.filter(p => p.stock < 20).length;
     const totalProducts = products.length;
 
+    // Process data for charts
+    const monthlyData = useMemo(() => {
+        const dataMap = {};
+
+        // Month names for mapping
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        // Initialize an empty map for the year 2026 based on our mock data (or current year ideally)
+        monthNames.forEach(m => {
+            dataMap[m] = { name: m, sales: 0, purchases: 0 };
+        });
+
+        // Add Sales
+        salesOrders.forEach(order => {
+            if (order.status !== 'Cancelled') {
+                const date = new Date(order.date);
+                const month = monthNames[date.getMonth()];
+                if (dataMap[month]) {
+                    dataMap[month].sales += order.total;
+                }
+            }
+        });
+
+        // Add Purchases
+        purchaseOrders.forEach(order => {
+            if (order.status !== 'Cancelled') {
+                const date = new Date(order.date);
+                const month = monthNames[date.getMonth()];
+                if (dataMap[month]) {
+                    dataMap[month].purchases += order.total;
+                }
+            }
+        });
+
+        return Object.values(dataMap);
+    }, [salesOrders, purchaseOrders]);
+
     return (
         <div className="module-container">
             <h1 className="module-title">Dashboard</h1>
-            <p className="module-desc" style={{ marginBottom: '24px' }}>Overview of key business metrics and recent activities across Sales, Purchasing, and Inventory.</p>
+            <p className="module-desc" style={{ marginBottom: '24px' }}>Overview of key business metrics, recent activities, and monthly trends.</p>
 
-            <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+            {/* Top Stat Cards */}
+            <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '32px' }}>
                 {/* Sales Section */}
                 <div className="stat-card" style={{ padding: '24px', backgroundColor: 'var(--surface-color)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', borderTop: '4px solid #3b82f6', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -83,6 +124,56 @@ const Dashboard = () => {
                         <p style={{ fontSize: '0.875rem', marginTop: '4px', color: 'var(--text-muted)' }}>
                             <span style={{ fontWeight: '600', color: '#ef4444' }}>{lowStockItems}</span> items need restocking
                         </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Charts Section */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
+                {/* Monthly Sales & Purchases Overview */}
+                <div style={{ padding: '24px', backgroundColor: 'var(--surface-color)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '24px', color: 'var(--text-main)' }}>Monthly Overview (Sales vs Purchases)</h3>
+                    <div style={{ width: '100%', height: 350 }}>
+                        <ResponsiveContainer>
+                            <BarChart
+                                data={monthlyData}
+                                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dy={10} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dx={-10} tickFormatter={(value) => `฿${value / 1000} k`} />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: 'var(--surface-color)', borderRadius: '8px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
+                                    formatter={(value) => [`฿${value.toLocaleString()} `, undefined]}
+                                />
+                                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                                <Bar dataKey="sales" name="Sales Revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20} />
+                                <Bar dataKey="purchases" name="Purchasing Cost" fill="#f59e0b" radius={[4, 4, 0, 0]} barSize={20} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Monthly Trend Line Chart */}
+                <div style={{ padding: '24px', backgroundColor: 'var(--surface-color)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '24px', color: 'var(--text-main)' }}>Revenue Trend</h3>
+                    <div style={{ width: '100%', height: 350 }}>
+                        <ResponsiveContainer>
+                            <LineChart
+                                data={monthlyData}
+                                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dy={10} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dx={-10} tickFormatter={(value) => `฿${value / 1000} k`} />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: 'var(--surface-color)', borderRadius: '8px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
+                                    formatter={(value) => [`฿${value.toLocaleString()} `, undefined]}
+                                />
+                                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                                <Line type="monotone" dataKey="sales" name="Sales Revenue" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                            </LineChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
             </div>
